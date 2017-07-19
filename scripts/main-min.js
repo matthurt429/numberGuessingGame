@@ -7,81 +7,94 @@ var lowOrHi = document.querySelector('.lowOrHi');
 var guessSubmit = document.querySelector('.guessSubmit');
 var guessField = document.querySelector('.guessField');
 
-guessField.addEventListener('keyup',keyupHandler )
+guessField.addEventListener('keyup', keyupHandler);
 
 var guessCount = 1;
 var resetButton;
 
-function keyupHandler(event){
-  //console.log('a key up event occured:'+ event.keyCode);
 
-// if the key pressed was enter
+
+function keyupHandler(event) {
+  console.log("A Keyup Event Occured, keyCode:" + event.keyCode);
+
+  // If the key pressed was "Enter"
   if(event.keyCode === 13) {
     guessSubmit.click();
   }
 }
-// function checkGuess() {
- //   if(guessField.value === '') {
- //     return;
- //   }
-// }
 
-function checkGuess(){
+function checkGuess() {
   var userGuess = Number(guessField.value);
-  if( guessCount === 1){
+
+  if(guessField.value === '') {
+    return;
+  }
+
+  if(userGuess < 1 || userGuess > 100 || isNaN(userGuess)) {
+    lastResult.textContent = "That wasn't a valid guess, try again!";
+    lastResult.style.backgroundColor = 'red';
+    guessField.value = '';
+    guessField.focus();
+    return;
+  }
+
+  if(guessCount === 1) {
     guesses.textContent = "Previous guesses: ";
   }
   guesses.textContent += userGuess + ' ';
 
-  if(userGuess === randomNumber){
-    //user guessed the right Number
-    lastResult.textContent = 'Congratulations! You got it right!';
+
+  //LOGIC GOES HERE
+  if(userGuess === randomNumber) {
+    //The user guessed the right number
+    lastResult.textContent = "Congratulations! You got it right!";
     lastResult.style.backgroundColor = 'green';
     lowOrHi.textContent = '';
     setGameOver();
-  }
-  else if ( guessCount === 4){
-    //the user is out of guesses
+  } else if (guessCount === 10) {
+    //The user is out of guesses
     lastResult.textContent = '!!!GAME OVER!!!';
-    lastResult.style.backgroundColor = 'red';
+    lastResult.style.backgroundColor = "red";
     setGameOver();
-  }
-  else{
-    //this is where the user hasn't gotten it right but still has guesses left
-    lastResult.textContent = 'Wrong!';
-    lastResult.style.backgroundColor='red';
-    if (userGuess < randomNumber){
-      lowOrHi.textContent = ' Last Guess to Low!';
-    }
-    else{
-      lowOrHi.textContent = 'Last Guess to High!';
+  } else {
+    //The user hasn't gotten it right, but still has guesses left
+    lastResult.textContent = "Wrong!";
+    lastResult.style.backgroundColor = "red";
+    if(userGuess < randomNumber) {
+      lowOrHi.textContent = 'Last guess was too low!';
+    } else {
+      lowOrHi.textContent = 'Last guess was too high!';
     }
   }
+
 
   guessCount++;
   guessField.value = '';
   guessField.focus();
 }
-function setGameOver(){
-  // Do some Work
+
+function setGameOver() {
+  //Do some work
   guessField.disabled = true;
   guessSubmit.disabled = true;
   resetButton = document.createElement('button');
-  resetButton.textContent = 'Start New Game';
+  resetButton.textContent = 'Start new game';
   document.querySelector('.form').appendChild(resetButton);
   resetButton.addEventListener('click', resetGame);
 }
-function resetGame(){
+
+function resetGame() {
   guessCount = 1;
 
   var resetParas = document.querySelectorAll('.resultParas p');
   for (var i = 0; i < resetParas.length; i++) {
     resetParas[i].textContent = '';
   }
-  lastResult.style.backgroundColor= 'white';
+
+  lastResult.style.backgroundColor = 'white';
 
   guessField.disabled = false;
-  guessSubmit.disabled = false
+  guessSubmit.disabled = false;
 
   resetButton.parentNode.removeChild(resetButton);
 
@@ -90,6 +103,7 @@ function resetGame(){
 
   randomNumber = Math.ceil(Math.random() * 100);
 }
-guessSubmit.addEventListener('click', checkGuess)
+
+guessSubmit.addEventListener('click', checkGuess);
 
 
